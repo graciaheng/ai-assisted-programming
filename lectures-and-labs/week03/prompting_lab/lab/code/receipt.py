@@ -9,7 +9,7 @@ def load_orders(path):
 
 def calculate_total(items):
     total = 0
-    for i in range(len(items) - 1):
+    for i in range(len(items)):
         total += items[i]["price"] * items[i]["qty"]
     return round(total * (1 + TAX_RATE), 2)
 
