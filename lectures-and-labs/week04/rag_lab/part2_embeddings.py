@@ -52,8 +52,11 @@ def load_documents(data_dir="data"):
     #
     # GitHub Copilot Prompt: "Read all text files from a directory and return a sorted list of (filename, content) tuples"
 
-    # YOUR CODE HERE
-    pass  # Remove this line when you add your code
+    for filename in sorted(os.listdir(data_dir)):
+        filepath = os.path.join(data_dir, filename)
+        if filename.endswith(".txt") and os.path.isfile(filepath):
+            with open(filepath, "r", encoding="utf-8") as file:
+                documents.append((filename, file.read()))
 
     return documents
 
@@ -88,8 +91,16 @@ def chunk_text(text, chunk_words=DEFAULT_CHUNK_WORDS, overlap_words=DEFAULT_OVER
     #
     # GitHub Copilot Prompt: "Split text into overlapping chunks of N words with M words of overlap"
 
-    # YOUR CODE HERE
-    pass  # Remove this line when you add your code
+    if chunk_words <= 0 or overlap_words < 0 or overlap_words >= chunk_words:
+        raise ValueError("chunk_words must be positive and overlap_words must be between 0 and chunk_words")
+
+    words = text.split()
+    step = chunk_words - overlap_words
+    for start in range(0, len(words), step):
+        chunk = words[start:start + chunk_words]
+        chunks.append(" ".join(chunk))
+        if start + chunk_words >= len(words):
+            break
 
     return chunks
 
@@ -116,8 +127,8 @@ def generate_embeddings(chunks, model_name=EMBEDDING_MODEL):
     #
     # GitHub Copilot Prompt: "Use sentence-transformers to encode a list of text chunks"
 
-    # YOUR CODE HERE
-    pass  # Remove this line when you add your code
+    model = SentenceTransformer(model_name)
+    return model.encode(chunks)
 
 
 def store_in_chromadb(chunks, embeddings, sources, collection_name=COLLECTION):
@@ -156,8 +167,26 @@ def store_in_chromadb(chunks, embeddings, sources, collection_name=COLLECTION):
     #
     # GitHub Copilot Prompt: "Store text chunks, embeddings and per-chunk metadata in a ChromaDB collection"
 
-    # YOUR CODE HERE
-    pass  # Remove this line when you add your code
+    if not (len(chunks) == len(embeddings) == len(sources)):
+        raise ValueError("chunks, embeddings, and sources must have the same length")
+
+    client = chromadb.PersistentClient(path="./chroma_db")
+    try:
+        client.delete_collection(name=collection_name)
+    except chromadb.errors.NotFoundError:
+        pass
+
+    collection = client.create_collection(
+        name=collection_name,
+        configuration={"hnsw": {"space": "cosine"}},
+    )
+    collection.add(
+        documents=chunks,
+        embeddings=embeddings.tolist(),
+        metadatas=[{"source": source} for source in sources],
+        ids=[f"chunk_{i}" for i in range(len(chunks))],
+    )
+    return collection
 
 
 def main():
