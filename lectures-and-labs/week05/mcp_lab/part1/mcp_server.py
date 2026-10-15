@@ -68,6 +68,18 @@ async def list_tools() -> list[Tool]:
                 "required": ["a", "b"],
             },
         ),
+        Tool(
+            name="power",
+            description="Calculate the power of a number",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "x": {"type": "number", "description": "Base"},
+                    "y": {"type": "number", "description": "Exponent"},
+                },
+                "required": ["x", "y"],
+            },
+        ),
     ]
 
 
@@ -78,6 +90,9 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
         text = f"Result: {arguments['a']} + {arguments['b']} = {arguments['a'] + arguments['b']}"
     elif name == "multiply":
         text = f"Result: {arguments['a']} x {arguments['b']} = {arguments['a'] * arguments['b']}"
+    elif name == "power":
+        text = f"Result: {arguments['x']} ^ {arguments['y']} = {arguments['x'] ** arguments['y']}"
+        print("[server] power called", file=sys.stderr, flush=True)
     elif name == "divide":
         if arguments["b"] == 0:
             text = "Error: cannot divide by zero"

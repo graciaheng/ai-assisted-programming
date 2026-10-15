@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "calculator": {
+      "command": "python",
+      "args": ["lectures-and-labs/week05/mcp_lab/part1/t4_server.py"]
+    }
+  }
+}

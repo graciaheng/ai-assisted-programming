@@ -107,6 +107,12 @@ async def main() -> None:
             result = await session.call_tool("divide", {"a": 10, "b": 0})
             say(f"   {result.content[0].text}")
 
+            say("\n7. power 2 ** 10")
+            result = await session.call_tool("power", {"x": 2, "y": 10})
+            result2 = await session.call_tool("add", {"a": 1, "b": 2})
+            say(f"   {result.content[0].text}")
+            say(f"   {result.content[0].text}")
+
     say("\n" + "=" * 60)
     say("Done. Scroll up for the trace; DIY 1 asks you to read it.")
 
