@@ -10,54 +10,72 @@ Instructions:
 4. Compare before and after
 """
 
-def calc(l):
-    # Calculate stuff
-    x = 0
-    y = 0
-    z = 0
-    for i in l:
-        x = x + i
-        if i > y:
-            y = i
-        if z == 0:
-            z = i
-        else:
-            if i < z:
-                z = i
-    a = x / len(l)
-    return {'avg': a, 'max': y, 'min': z, 'sum': x}
+import json
+
+
+def calc(numbers):
+    """Return the average, maximum, minimum, and sum of the numbers."""
+    total = 0
+    maximum = 0
+    minimum = 0
+
+    for number in numbers:
+        total += number
+        if number > maximum:
+            maximum = number
+        if minimum == 0:
+            minimum = number
+        elif number < minimum:
+            minimum = number
+
+    average = total / len(numbers)
+    return {
+        'avg': average,
+        'max': maximum,
+        'min': minimum,
+        'sum': total,
+    }
+
+
+def _process_active_record(record):
+    """Build the processed representation of an active record."""
+    value = record['value']
+    return {
+        'id': record['id'],
+        'value': value * 1.1,
+        'priority': 'high' if value > 100 else 'low',
+    }
 
 
 def proc_data(data):
-    # Process the data
-    result = []
-    for d in data:
-        if d['status'] == 'active':
-            temp = {}
-            temp['id'] = d['id']
-            temp['value'] = d['value'] * 1.1
-            temp['priority'] = 'high' if d['value'] > 100 else 'low'
-            result.append(temp)
-    return result
+    """Process and return only active records."""
+    processed_records = []
+    for record in data:
+        if record['status'] == 'active':
+            processed_records.append(_process_active_record(record))
+    return processed_records
+
+
+def _partition_by_status(records):
+    """Split records into active and inactive lists."""
+    active_records = []
+    inactive_records = []
+
+    for record in records:
+        if record['status'] == 'active':
+            active_records.append(record)
+        else:
+            inactive_records.append(record)
+
+    return active_records, inactive_records
 
 
 def get_stuff(filename):
-    # Read file and do stuff
-    import json
-    f = open(filename, 'r')
-    data = json.load(f)
-    f.close()
-    
-    active = []
-    inactive = []
-    
-    for item in data:
-        if item['status'] == 'active':
-            active.append(item)
-        else:
-            inactive.append(item)
-    
-    return active, inactive
+    """Load records from a JSON file and split them by status."""
+    with open(filename, 'r') as input_file:
+        records = json.load(input_file)
+
+    return _partition_by_status(records)
 
 
 # Test code
@@ -65,12 +83,12 @@ if __name__ == '__main__':
     numbers = [10, 20, 30, 40, 50]
     result = calc(numbers)
     print(result)
-    
+
     data = [
         {'id': 1, 'status': 'active', 'value': 150},
         {'id': 2, 'status': 'active', 'value': 80},
         {'id': 3, 'status': 'inactive', 'value': 200},
     ]
-    
+
     processed = proc_data(data)
     print(processed)
