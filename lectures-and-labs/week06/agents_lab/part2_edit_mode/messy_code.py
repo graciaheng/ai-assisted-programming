@@ -71,7 +71,7 @@ def _partition_by_status(records):
 
 
 def get_stuff(filename):
-    """Load records from a JSON file and split them by status."""
+    """Return active and inactive records loaded from a JSON file."""
     with open(filename, 'r') as input_file:
         records = json.load(input_file)
 

@@ -53,3 +53,10 @@ def test_unknown_task_id_returns_an_error(tmp_path):
 
     assert result.returncode == 1
     assert "Task 42 not found." in result.stderr
+
+
+def test_version_option_prints_version():
+    result = run_cli(CLI.parent, "--version")
+
+    assert result.returncode == 0
+    assert result.stdout == "1.0\n"
