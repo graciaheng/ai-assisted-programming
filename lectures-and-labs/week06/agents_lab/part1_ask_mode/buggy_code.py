@@ -28,7 +28,7 @@ def load_grades(filename: str) -> List[Dict[str, any]]:
         for row in reader:
             student = {
                 'name': row['name'],
-                'grade': int(row['grade']),  # Bug: What if the value isn't a valid integer?
+                'grade': float(row['grade']),  # FIXED Bug: What if the value isn't a valid integer?
                 'subject': row['subject']
             }
             students.append(student)
@@ -38,14 +38,18 @@ def load_grades(filename: str) -> List[Dict[str, any]]:
 
 def calculate_average(grades: List[int]) -> float:
     """Calculate the average of a list of grades."""
-    total = sum(grades)
-    average = total / len(grades)  # Bug: What if grades is empty?
-    return average
+    if not grades:
+        return None
+    return sum(grades) / len(grades)  # FIXED Bug: What if grades is empty?
+    
 
 
 def find_highest_grade(students: List[Dict[str, any]]) -> Dict[str, any]:
     """Find the student with the highest grade."""
-    highest = students[0]  # Bug: What if students is empty?
+    if not students:
+        return None  # FIXED Bug: What if students is empty?
+    
+    highest = students[0]  
     
     for student in students:
         if student['grade'] > highest['grade']:
@@ -56,7 +60,10 @@ def find_highest_grade(students: List[Dict[str, any]]) -> Dict[str, any]:
 
 def find_lowest_grade(students: List[Dict[str, any]]) -> Dict[str, any]:
     """Find the student with the lowest grade."""
-    lowest = None
+    if not students:
+        return None  # FIXED Bug: What if students is empty?
+    
+    lowest = students[0]  
     
     for student in students:
         if lowest is None or student['grade'] < lowest['grade']:
@@ -116,6 +123,9 @@ def main():
             f.write(report)
         
         print("\nReport saved to report.txt")
+
+    except FileNotFoundError:
+        print("Could not find grades.csv. Make sure it is in the folder the program is running from.")
         
     except Exception as e:
         print(f"An error occurred: {e}")  # Bug: Too generic error handling

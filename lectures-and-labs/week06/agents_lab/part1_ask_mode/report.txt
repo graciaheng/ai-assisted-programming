@@ -1,0 +1,12 @@
+
+    Grade Report
+    ============
+    Total Students: 10
+    Average Grade: 66.77
+    Highest Grade: Grace Lee - 95.67
+    Lowest Grade: Frank Miller - -10.0
+    
+    Students Needing Retakes (2):
+    
+  - Charlie Brown
+  - Frank Miller

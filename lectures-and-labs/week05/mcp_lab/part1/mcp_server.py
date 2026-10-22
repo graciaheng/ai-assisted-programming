@@ -102,6 +102,19 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
         raise ValueError(f"Unknown tool: {name}")
     return [TextContent(type="text", text=text)]
 
+def dispatch(name, arguments):
+    if name == "add":
+        text = f"Result: {arguments['a']} + {arguments['b']} = {arguments['a'] + arguments['b']}"
+    elif name == "multiply":
+        text = f"Result: {arguments['a']} x {arguments['b']} = {arguments['a'] * arguments['b']}"
+    elif name == "divide":
+        if arguments["b"] == 0:
+            text = "Error: cannot divide by zero"
+        else:
+            text = f"Result: {arguments['a']} / {arguments['b']} = {arguments['a'] / arguments['b']}"
+    else:
+        raise ValueError(f"Unknown tool: {name}")
+    return text
 
 async def main() -> None:
     print("[server] calculator server starting -- this line came from the server process, on stderr",

@@ -113,6 +113,22 @@ async def main() -> None:
             say(f"   {result.content[0].text}")
             say(f"   {result.content[0].text}")
 
+            tests = [
+                ("unknown_tool", {}),
+                ("add", {}),
+                ("add", {"a": "x", "b": 1}),
+                ("divide", {"a": 1, "b": 0}),
+            ]
+
+            for name, arguments in tests:
+                say(f"\nTesting {name} with {arguments}")
+                try:
+                    result = await session.call_tool(name, arguments)
+                    say(f"   isError: {result.isError}")
+                    say(f"   reply: {result.content[0].text}")
+                except Exception as e:
+                    say(f"   Exception: {type(e).__name__}: {e}")
+
     say("\n" + "=" * 60)
     say("Done. Scroll up for the trace; DIY 1 asks you to read it.")
 
